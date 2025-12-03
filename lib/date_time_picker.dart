@@ -756,15 +756,38 @@ class _DateTimePickerState extends FormFieldState<String> {
     }
   }
 
-  void set12HourTimeValues(final TimeOfDay ptTimePicked) {
-    final ldNow = DateTime.now();
-    final ldTime = DateTime(ldNow.year, ldNow.month, ldNow.day,
-        ptTimePicked.hour, ptTimePicked.minute);
-    final lsHour = DateFormat("hh", widget.locale.toString()).format(ldTime);
-    final lsMinute = DateFormat("mm", widget.locale.toString()).format(ldTime);
+  String _intlLocaleString() {
+    final loc = widget.locale;
+    if (loc == null) return Intl.getCurrentLocale();
+    final cc = loc.countryCode;
+    if (cc != null && cc.isNotEmpty) {
+      return '${loc.languageCode}-${cc}'; // en-AU
+    }
+    return loc.languageCode; // 'en'
+  }
 
-    _sTime = '$lsHour:$lsMinute';
-    _sPeriod = ptTimePicked.period.index == 0 ? ' AM' : ' PM';
+  void set12HourTimeValues(final TimeOfDay ptTimePicked) {
+    // use the current selected date (_dDate) so "yesterday" works correctly
+    final ldTime = DateTime(
+      _dDate.year,
+      _dDate.month,
+      _dDate.day,
+      ptTimePicked.hour,
+      ptTimePicked.minute,
+    );
+  
+    final localeStr = _intlLocaleString();
+  
+    // Full formatted time including AM/PM, e.g. "07:30 PM"
+    final full = DateFormat('hh:mm a', localeStr).format(ldTime);
+  
+    // Split into time and period
+    final parts = full.split(' ');
+    _sTime = parts.isNotEmpty ? parts[0] : DateFormat('hh:mm', localeStr).format(ldTime);
+    _sPeriod = parts.length > 1 ? ' ${parts[1]}' : '';
+  
+    // Keep _sValue in a stable, parseable 24-hour format for internal/storage use
+    _sValue = DateFormat('HH:mm', localeStr).format(ldTime);
   }
 
   Future<void> _showTimePickerDialog() async {
