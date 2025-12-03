@@ -548,7 +548,7 @@ class _DateTimePickerState extends FormFieldState<String> {
     _tTime = widget.initialTime ?? TimeOfDay.now();
 
     final lsValue = _effectiveController?.text.trim();
-    final languageCode = widget.locale?.languageCode;
+    final languageCode = _intlLocaleString();
 
     if (lsValue != null && lsValue != '' && lsValue != 'null') {
       if (widget.type != DateTimePickerType.time) {
@@ -599,7 +599,7 @@ class _DateTimePickerState extends FormFieldState<String> {
   @override
   void didUpdateWidget(DateTimePicker oldWidget) {
     super.didUpdateWidget(oldWidget);
-    final languageCode = widget.locale?.languageCode;
+    final languageCode = _intlLocaleString();
 
     if (widget.controller != oldWidget.controller) {
       oldWidget.controller?.removeListener(_handleControllerChanged);
@@ -721,12 +721,12 @@ class _DateTimePickerState extends FormFieldState<String> {
       errorFormatText: widget.errorFormatText,
       errorInvalidText: widget.errorInvalidText,
       //textDirection: widget.textDirection,
-      locale: widget.locale,
+      locale: _intlLocaleString(),
       useRootNavigator: widget.useRootNavigator,
       routeSettings: widget.routeSettings,
     );
 
-    final languageCode = widget.locale?.languageCode;
+    final languageCode = _intlLocaleString();
     if (ldDatePicked != null) {
       _sDate = DateFormat('yyyy-MM-dd', languageCode).format(ldDatePicked);
       _dDate = ldDatePicked;
@@ -757,7 +757,7 @@ class _DateTimePickerState extends FormFieldState<String> {
   }
 
   String _intlLocaleString() {
-    final loc = widget.locale;
+    final loc = _intlLocaleString();
     if (loc == null) return Intl.getCurrentLocale();
     final cc = loc.countryCode;
     if (cc != null && cc.isNotEmpty) {
@@ -860,12 +860,12 @@ class _DateTimePickerState extends FormFieldState<String> {
       errorFormatText: widget.errorFormatText,
       errorInvalidText: widget.errorInvalidText,
       //textDirection: widget.textDirection,
-      locale: widget.locale,
+      locale: _intlLocaleString(),
       useRootNavigator: widget.useRootNavigator,
       routeSettings: widget.routeSettings,
     );
 
-    final languageCode = widget.locale?.languageCode;
+    final languageCode = _intlLocaleString();
     if (ldDatePicked != null) {
       _sDate = DateFormat('yyyy-MM-dd', languageCode).format(ldDatePicked);
       _dDate = ldDatePicked;
