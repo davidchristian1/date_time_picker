@@ -1,7 +1,3 @@
-// Copyright 2014 The m3uzz Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
 library date_time_picker;
 
 import 'package:flutter/material.dart';
@@ -10,130 +6,7 @@ import 'package:intl/intl.dart';
 
 enum DateTimePickerType { date, time, dateTime, dateTimeSeparate }
 
-/// A [DateTimePicker] that contains a [TextField].
-///
-/// This is a convenience widget that wraps a [TextField] widget in a
-/// [DateTimePicker].
-///
-/// A [Form] ancestor is not required. The [Form] simply makes it easier to
-/// save, reset, or validate multiple fields at once. To use without a [Form],
-/// pass a [GlobalKey] to the constructor and use [GlobalKey.currentState] to
-/// save or reset the form field.
-///
-/// When a [controller] is specified, its [TextEditingController.text]
-/// defines the [initialValue]. If this [FormField] is part of a scrolling
-/// container that lazily constructs its children, like a [ListView] or a
-/// [CustomScrollView], then a [controller] should be specified.
-/// The controller's lifetime should be managed by a stateful widget ancestor
-/// of the scrolling container.
-///
-/// If a [controller] is not specified, [initialValue] can be used to give
-/// the automatically generated controller an initial value.
-///
-/// Remember to [dispose] of the [TextEditingController] when it is no longer needed.
-/// This will ensure we discard any resources used by the object.
-///
-/// For a documentation about the various parameters, see [TextField].
-///
-/// {@tool snippet}
-///
-/// Creates a [DateTimePicker] with an [InputDecoration] and validator function.
-///
-/// ![ If the user enters valid text, the TextField appears normally without any
-/// warnings to the user](https://flutter.github.io/assets-for-api-docs/assets/material/text_form_field.png)
-///
-/// ![ If the user enters invalid text, the error message returned from the
-/// validator function is displayed in dark red underneath the input]
-/// (https://flutter.github.io/assets-for-api-docs/assets/material/text_form_field_error.png)
-///
-/// ```dart
-/// DateTimePicker(
-///   decoration: const InputDecoration(
-///     icon: Icon(Icons.person),
-///     hintText: 'What do people call you?',
-///     labelText: 'Name *',
-///   ),
-///   onSaved: (String value) {
-///     // This optional block of code can be used to run
-///     // code when the user saves the form.
-///   },
-///   validator: (String value) {
-///     return value.contains('@') ? 'Do not use the @ char.' : null;
-///   },
-/// )
-/// ```
-/// {@end-tool}
-///
-/// {@tool dartpad --template=stateful_widget_material}
-/// This example shows how to move the focus to the next field when the user
-/// presses the ENTER key.
-///
-/// ```dart imports
-/// import 'package:flutter/services.dart';
-/// ```
-///
-/// ```dart
-/// Widget build(BuildContext context) {
-///   return Material(
-///     child: Center(
-///       child: Shortcuts(
-///         shortcuts: <LogicalKeySet, Intent>{
-///           // Pressing enter on the field will now move to the next field.
-///           LogicalKeySet(LogicalKeyboardKey.enter):
-///               Intent(NextFocusAction.key),
-///         },
-///         child: FocusTraversalGroup(
-///           child: Form(
-///             autovalidate: true,
-///             onChanged: () {
-///               Form.of(primaryFocus.context).save();
-///             },
-///             child: Wrap(
-///               children: List<Widget>.generate(5, (int index) {
-///                 return Padding(
-///                   padding: const EdgeInsets.all(8.0),
-///                   child: ConstrainedBox(
-///                     constraints: BoxConstraints.tight(Size(200, 50)),
-///                     child: DateTimePicker(
-///                       initialValue: DateTime.now().toString(),
-///                       firstDate: DateTime(2000),
-///                       lastDate: DateTime(2100),
-///                       onSaved: (String value) {
-///                         print('Value for field $index saved as "$value"');
-///                       },
-///                     ),
-///                   ),
-///                 );
-///               }),
-///             ),
-///           ),
-///         ),
-///       ),
-///     ),
-///   );
-/// }
-/// ```
-/// {@end-tool}
-///
-/// See also:
-///
-///  * <https://material.io/design/components/text-fields.html>
-///  * [TextField], which is the underlying text field without the [Form]
-///    integration.
-///  * [InputDecorator], which shows the labels and other visual elements that
-///    surround the actual text editing widget.
-///  * Learn how to use a [TextEditingController] in one of our
-///  [cookbook recipe]s.(https://flutter.dev/docs/cookbook/forms/text-field-changes#2-use-a-texteditingcontroller)
 class DateTimePicker extends FormField<String> {
-  /// Creates a [DateTimePicker] that contains a [TextField].
-  ///
-  /// When a [controller] is specified, [initialValue] must be null (the
-  /// default). If [controller] is null, then a [TextEditingController]
-  /// will be constructed automatically and its `text` will be initialized
-  /// to [initialValue] or the empty string.
-  ///
-  /// For documentation about the various parameters, see the [TextField] class
-  /// and [new TextField], the constructor.
   DateTimePicker({
     Key? key,
     this.type = DateTimePickerType.date,
@@ -168,7 +41,6 @@ class DateTimePicker extends FormField<String> {
     String? initialValue,
     FocusNode? focusNode,
     InputDecoration? decoration,
-    //TextInputType keyboardType,
     TextCapitalization textCapitalization = TextCapitalization.none,
     TextInputAction? textInputAction,
     TextStyle? style,
@@ -359,154 +231,35 @@ class DateTimePicker extends FormField<String> {
             }
           },
         );
-
-  /// The DateTimePicker type:
-  /// [date], [time], [dateTime] or [dateTimeSeparate].
   final DateTimePickerType type;
-
-  /// Controls the text being edited.
-  ///
-  /// If null, this widget will create its own [TextEditingController] and
-  /// initialize its [TextEditingController.text] with [initialValue].
-  /// The value need to be a DateTime String or null
   final TextEditingController? controller;
-
-  /// The earliest allowable [DateTime] that the user can select.
   final DateTime? firstDate;
-
-  /// The latest allowable [DateTime] that the user can select.
   final DateTime? lastDate;
-
-  /// The initial date to be used for the date picker if initialValue is null or empty
   final DateTime? initialDate;
-
-  /// The initial time to be used for the time picker if initialValue is null or empty
   final TimeOfDay? initialTime;
-
-  /// For forms that match one of our predefined skeletons, we look up the
-  /// corresponding pattern in [locale] (or in the default locale if none is
-  /// specified) and use the resulting full format string. This is the
-  /// preferred usage, but if [newPattern] does not match one of the skeletons,
-  /// then it is used as a format directly, but will not be adapted to suit the
-  /// locale.
   final String? dateMask;
-
-  /// An icon to show before the input field and outside of the decoration's
-  /// container.
-  ///
-  /// The size and color of the icon is configured automatically using an
-  /// [IconTheme] and therefore does not need to be explicitly given in the
-  /// icon widget.
-  ///
-  /// The trailing edge of the icon is padded by 16dps.
-  ///
-  /// The decoration's container is the area which is filled if [filled] is
-  /// true and bordered per the [border]. It's the area adjacent to
-  /// [decoration.icon] and above the widgets that contain [helperText],
-  /// [errorText], and [counterText].
-  ///
-  /// See [Icon], [ImageIcon].
   final Widget? icon;
-
-  /// Text that describes the date input field.
-  ///
-  /// When the date input field is empty and unfocused, the label is displayed on
-  /// top of the input field (i.e., at the same location on the screen where
-  /// text may be entered in the input field). When the input field receives
-  /// focus (or if the field is non-empty), the label moves above (i.e.,
-  /// vertically adjacent to) the input field.
   final String? dateLabelText;
-
-  /// Text that describes the time input field.
-  ///
-  /// When the time input field is empty and unfocused, the label is displayed on
-  /// top of the input field (i.e., at the same location on the screen where
-  /// text may be entered in the input field). When the input field receives
-  /// focus (or if the field is non-empty), the label moves above (i.e.,
-  /// vertically adjacent to) the input field.
   final String? timeLabelText;
-
-  /// Text that suggests what sort of date input the field accepts.
-  ///
-  /// Displayed on top of the date input [child] (i.e., at the same location on the
-  /// screen where text may be entered in the input [child]) when the input
-  /// [isEmpty] and either (a) [labelText] is null or (b) the input has the focus.
   final String? dateHintText;
-
-  /// Text that suggests what sort of time input the field accepts.
-  ///
-  /// Displayed on top of the time input [child] (i.e., at the same location on the
-  /// screen where text may be entered in the input [child]) when the input
-  /// [isEmpty] and either (a) [labelText] is null or (b) the input has the focus.
   final String? timeHintText;
-
-  /// Optional strings for the [cancelText] to override the default text.
   final String? calendarTitle;
-
-  /// Optional strings for the [cancelText] to override the default text.
   final String? cancelText;
-
-  /// Optional strings for the [confirmText] to override the default text.
   final String? confirmText;
-
-  /// Optional strings for the [fieldLabelText] to override the default text.
   final String? fieldLabelText;
-
-  /// Optional strings for the [fieldHintText] to override the default text.
   final String? fieldHintText;
-
-  /// Optional strings for the [errorFormatText] to override the default text.
   final String? errorFormatText;
-
-  /// Optional strings for the [errorInvalidText] to override the default text.
   final String? errorInvalidText;
-
-  /// An optional [textDirection] argument can be used to set the text direction
-  /// ([TextDirection.ltr] or [TextDirection.rtl]) for the date picker. It
-  /// defaults to the ambient text direction provided by [Directionality]. If both
-  /// [locale] and [textDirection] are non-null, [textDirection] overrides the
-  /// direction chosen for the [locale].
   final TextDirection? textDirection;
-
-  /// An optional [locale] argument can be used to set the locale for the date
-  /// picker. It defaults to the ambient locale provided by [Localizations].
   final Locale? locale;
-
-  /// The [context], [useRootNavigator] and [routeSettings] arguments are passed to
-  /// [showDialog], the documentation for which discusses how it is used. [context]
-  /// and [useRootNavigator] must be non-null.
   final bool useRootNavigator;
-
-  /// Creates data used to construct routes.
   final RouteSettings? routeSettings;
-
-  /// An optional [initialEntryMode] argument can be used to display the date
-  /// picker in the [DatePickerEntryMode.calendar] (a calendar month grid)
-  /// or [DatePickerEntryMode.input] (a text input field) mode.
-  /// It defaults to [DatePickerEntryMode.calendar] and must be non-null.
   final DatePickerEntryMode? initialEntryMode;
-
-  /// An optional [initialDatePickerMode] argument can be used to have the
-  /// calendar date picker initially appear in the [DatePickerMode.year] or
-  /// [DatePickerMode.day] mode. It defaults to [DatePickerMode.day], and
-  /// must be non-null.
   final DatePickerMode? initialDatePickerMode;
-
-  /// An optional [selectableDayPredicate] function can be passed in to only allow
-  /// certain days for selection. If provided, only the days that
-  /// [selectableDayPredicate] returns true for will be selectable. For example,
-  /// this can be used to only allow weekdays for selection. If provided, it must
-  /// return true for [initialDate].
   final bool Function(DateTime)? selectableDayPredicate;
-
-  /// Show a dialog with time unconditionally displayed in 24 hour format.
   final bool use24HourFormat;
-
-  /// The width for time text field when DateTimePickerType is dateTimeSeparated.
   final double? timeFieldWidth;
-
   final bool timePickerEntryModeInput;
-
   final ValueChanged<String>? onChanged;
 
   @override
@@ -519,7 +272,13 @@ class _DateTimePickerState extends FormFieldState<String> {
   final TextEditingController _timeLabelController = TextEditingController();
   DateTime _dDate = DateTime.now();
   TimeOfDay _tTime = TimeOfDay.now();
+
+  // _sValue = stored parseable value
+  // For dateTime: 'yyyy-MM-dd HH:mm'
+  // For date only: 'yyyy-MM-dd'
+  // For time only: 'HH:mm'
   String _sValue = '';
+  // Human display strings
   String _sDate = '';
   String _sTime = '';
   String _sPeriod = '';
@@ -543,55 +302,164 @@ class _DateTimePickerState extends FormFieldState<String> {
     initValues();
   }
 
+  // ---------- helpers ----------
+  String _intlLocaleString() {
+    final loc = widget.locale;
+    if (loc == null) return Intl.getCurrentLocale();
+    final cc = loc.countryCode;
+    if (cc != null && cc.isNotEmpty) {
+      return '${loc.languageCode}-${cc}'; // en-AU
+    }
+    return loc.languageCode; // 'en'
+  }
+
+  DateTime _parseStoredDateTime(String v) {
+    // expects 'yyyy-MM-dd HH:mm'
+    return DateFormat('yyyy-MM-dd HH:mm').parse(v, false);
+  }
+
+  DateTime _parseStoredDate(String v) {
+    // expects 'yyyy-MM-dd'
+    return DateFormat('yyyy-MM-dd').parse(v, false);
+  }
+
+  TimeOfDay _parseStoredTime(String v) {
+    final dt = DateFormat('HH:mm').parse(v, false);
+    return TimeOfDay.fromDateTime(dt);
+  }
+
+  String _formatStoredDateTime(DateTime dt) {
+    return DateFormat('yyyy-MM-dd HH:mm').format(dt);
+  }
+
+  String _formatStoredDate(DateTime dt) {
+    return DateFormat('yyyy-MM-dd').format(dt);
+  }
+
+  String _formatStoredTime(DateTime dt) {
+    return DateFormat('HH:mm').format(dt);
+  }
+
+  // ---------- initialization ----------
   void initValues() {
     _dDate = widget.initialDate ?? DateTime.now();
     _tTime = widget.initialTime ?? TimeOfDay.now();
 
     final lsValue = _effectiveController?.text.trim();
-    final languageCode = _intlLocaleString();
+    final localeStr = _intlLocaleString();
 
     if (lsValue != null && lsValue != '' && lsValue != 'null') {
-      if (widget.type != DateTimePickerType.time) {
-        _dDate = DateTime.tryParse(lsValue) ?? DateTime.now();
-        _tTime = TimeOfDay.fromDateTime(_dDate);
-        _sDate = DateFormat('yyyy-MM-dd', languageCode).format(_dDate);
-        _sTime = DateFormat('HH:mm', languageCode).format(_dDate);
-
-        if (!widget.use24HourFormat) {
-          _sTime = DateFormat('hh:mm a', languageCode).format(_dDate);
+      if (widget.type == DateTimePickerType.time) {
+        // stored format: 'HH:mm'
+        try {
+          _tTime = _parseStoredTime(lsValue);
+          _sTime = widget.use24HourFormat
+              ? DateFormat('HH:mm', localeStr)
+                  .format(DateFormat('HH:mm').parse(lsValue))
+              : DateFormat('hh:mm a', localeStr)
+                  .format(DateFormat('HH:mm').parse(lsValue));
+          _sPeriod = widget.use24HourFormat
+              ? ''
+              : ' ' + DateFormat('a', localeStr)
+                  .format(DateFormat('HH:mm').parse(lsValue));
+          _sValue = lsValue;
+          _timeLabelController.text = _sTime + _sPeriod;
+        } catch (_) {
+          // fallback
+          _sValue = '';
         }
-
-        _timeLabelController.text = _sTime;
-        _dateLabelController.text = _sDate;
-
-        if (widget.dateMask != null && widget.dateMask != '') {
-          _dateLabelController.text =
-              DateFormat(widget.dateMask, languageCode).format(_dDate);
-        } else {
-          String lsMask = 'MMM d, yyyy';
-
-          if (widget.type == DateTimePickerType.dateTime && _sTime != '') {
-            lsMask = 'MMM d, yyyy - HH:mm';
-
-            if (!widget.use24HourFormat) {
-              lsMask = 'MMM d, yyyy - hh:mm a';
-            }
+      } else if (widget.type == DateTimePickerType.date) {
+        // stored format: 'yyyy-MM-dd'
+        try {
+          _dDate = _parseStoredDate(lsValue);
+          _sDate = _formatStoredDate(_dDate);
+          // display date
+          if (widget.dateMask != null && widget.dateMask!.isNotEmpty) {
+            _dateLabelController.text =
+                DateFormat(widget.dateMask!, localeStr).format(_dDate);
+          } else {
+            _dateLabelController.text =
+                DateFormat('MMM dd, yyyy', localeStr).format(_dDate);
           }
-
-          _dateLabelController.text =
-              DateFormat(lsMask, languageCode).format(_dDate);
+          _sValue = _sDate;
+        } catch (_) {
+          _sValue = '';
         }
       } else {
-        final llTime = lsValue.split(':');
-        _tTime =
-            TimeOfDay(hour: int.parse(llTime[0]), minute: int.parse(llTime[1]));
-        _sTime = lsValue;
+        // dateTime or dateTimeSeparate — stored format: 'yyyy-MM-dd HH:mm'
+        try {
+          final dt = _parseStoredDateTime(lsValue);
+          _dDate = DateTime(dt.year, dt.month, dt.day);
+          _tTime = TimeOfDay.fromDateTime(dt);
 
-        if (!widget.use24HourFormat) {
-          _sPeriod = _tTime.period.index == 0 ? ' AM' : ' PM';
+          // display time
+          _sTime = widget.use24HourFormat
+              ? DateFormat('HH:mm', localeStr).format(dt)
+              : DateFormat('hh:mm', localeStr).format(dt);
+          _sPeriod =
+              widget.use24HourFormat ? '' : ' ' + DateFormat('a', localeStr).format(dt);
+
+          // display date
+          _sDate = DateFormat('yyyy-MM-dd').format(_dDate);
+
+          // date label (with mask if provided)
+          if (widget.dateMask != null && widget.dateMask!.isNotEmpty) {
+            _dateLabelController.text =
+                DateFormat(widget.dateMask!, localeStr).format(dt);
+          } else {
+            final lsMask = _sTime != '' ? 'MMM dd, yyyy - HH:mm' : 'MMM dd, yyyy';
+            _dateLabelController.text =
+                DateFormat(lsMask, localeStr).format(dt);
+          }
+
+          _timeLabelController.text = (_sTime + _sPeriod).trim();
+          _sValue = _formatStoredDateTime(dt);
+        } catch (_) {
+          _sValue = '';
         }
+      }
+    } else {
+      // No existing value — show initial if available
+      if (widget.type == DateTimePickerType.time) {
+        _tTime = widget.initialTime ?? TimeOfDay.now();
+        final built = DateTime(
+            _dDate.year, _dDate.month, _dDate.day, _tTime.hour, _tTime.minute);
+        _sTime = widget.use24HourFormat
+            ? DateFormat('HH:mm', _intlLocaleString()).format(built)
+            : DateFormat('hh:mm', _intlLocaleString()).format(built);
+        _sPeriod = widget.use24HourFormat
+            ? ''
+            : ' ' + DateFormat('a', _intlLocaleString()).format(built);
+        _timeLabelController.text = (_sTime + _sPeriod).trim();
+      } else {
+        // date or dateTime
+        final built = widget.initialDate ?? DateTime.now();
+        _dDate = built;
+        if (widget.type == DateTimePickerType.date) {
+          _sDate = DateFormat('yyyy-MM-dd').format(_dDate);
+          _dateLabelController.text = widget.dateMask != null && widget.dateMask!.isNotEmpty
+              ? DateFormat(widget.dateMask!, _intlLocaleString()).format(_dDate)
+              : DateFormat('MMM dd, yyyy', _intlLocaleString()).format(_dDate);
+          _sValue = _sDate;
+        } else {
+          // dateTime initial
+          final initialTime = widget.initialTime ?? TimeOfDay.fromDateTime(DateTime.now());
+          final combined = DateTime(
+              _dDate.year, _dDate.month, _dDate.day, initialTime.hour, initialTime.minute);
+          _sTime = widget.use24HourFormat
+              ? DateFormat('HH:mm', _intlLocaleString()).format(combined)
+              : DateFormat('hh:mm', _intlLocaleString()).format(combined);
+          _sPeriod = widget.use24HourFormat
+              ? ''
+              : ' ' + DateFormat('a', _intlLocaleString()).format(combined);
+          _timeLabelController.text = (_sTime + _sPeriod).trim();
 
-        _timeLabelController.text = _sTime + _sPeriod;
+          _dateLabelController.text = widget.dateMask != null && widget.dateMask!.isNotEmpty
+              ? DateFormat(widget.dateMask!, _intlLocaleString()).format(combined)
+              : DateFormat('MMM dd, yyyy - HH:mm', _intlLocaleString()).format(combined);
+
+          _sValue = _formatStoredDateTime(combined);
+        }
       }
     }
   }
@@ -599,7 +467,7 @@ class _DateTimePickerState extends FormFieldState<String> {
   @override
   void didUpdateWidget(DateTimePicker oldWidget) {
     super.didUpdateWidget(oldWidget);
-    final languageCode = _intlLocaleString();
+    final localeStr = _intlLocaleString();
 
     if (widget.controller != oldWidget.controller) {
       oldWidget.controller?.removeListener(_handleControllerChanged);
@@ -619,59 +487,59 @@ class _DateTimePickerState extends FormFieldState<String> {
       }
     }
 
-    if (_effectiveController?.text != null &&
-        _effectiveController?.text != '') {
-      final lsValue = _effectiveController?.text.trim();
+    final effectiveText = _effectiveController?.text;
+    if (effectiveText != null && effectiveText.trim().isNotEmpty) {
+      final lsValue = effectiveText.trim();
 
-      if (lsValue != null && lsValue != '' && lsValue != 'null') {
-        if (widget.type != DateTimePickerType.time) {
-          final lsOldDate = _sDate;
-          final lsOldTime = _sTime;
-          _dDate = DateTime.tryParse(lsValue) ?? DateTime.now();
+      if (widget.type == DateTimePickerType.time) {
+        try {
+          _tTime = _parseStoredTime(lsValue);
+          final dt = DateFormat('HH:mm').parse(lsValue);
+          _sTime = widget.use24HourFormat
+              ? DateFormat('HH:mm', localeStr).format(dt)
+              : DateFormat('hh:mm', localeStr).format(dt);
+          _sPeriod = widget.use24HourFormat ? '' : ' ' + DateFormat('a', localeStr).format(dt);
+          _timeLabelController.text = (_sTime + _sPeriod).trim();
+          _sValue = lsValue;
+        } catch (_) {}
+      } else if (widget.type == DateTimePickerType.date) {
+        try {
+          final dt = _parseStoredDate(lsValue);
+          _dDate = dt;
+          _sDate = DateFormat('yyyy-MM-dd').format(_dDate);
+          _dateLabelController.text = widget.dateMask != null && widget.dateMask!.isNotEmpty
+              ? DateFormat(widget.dateMask!, localeStr).format(_dDate)
+              : DateFormat('MMM dd, yyyy', localeStr).format(_dDate);
+          _sValue = _sDate;
+        } catch (_) {}
+      } else {
+        // dateTime or dateTimeSeparate
+        try {
+          final dt = _parseStoredDateTime(lsValue);
+          _dDate = DateTime(dt.year, dt.month, dt.day);
+          _tTime = TimeOfDay.fromDateTime(dt);
 
-          _sDate = DateFormat('yyyy-MM-dd', languageCode).format(_dDate);
+          _sTime = widget.use24HourFormat
+              ? DateFormat('HH:mm', localeStr).format(dt)
+              : DateFormat('hh:mm', localeStr).format(dt);
+          _sPeriod = widget.use24HourFormat ? '' : ' ' + DateFormat('a', localeStr).format(dt);
 
-          if (lsOldTime != '') {
-            _tTime = TimeOfDay.fromDateTime(_dDate);
-            _sTime = DateFormat('HH:mm', languageCode).format(_dDate);
+          _sDate = DateFormat('yyyy-MM-dd').format(_dDate);
 
-            if (!widget.use24HourFormat) {
-              _sTime = DateFormat('hh:mm a', languageCode).format(_dDate);
-            }
-          }
-
-          _dateLabelController.text = lsOldDate != '' ? _sDate : '';
-          _timeLabelController.text = lsOldTime != '' ? _sTime : '';
-
-          if (widget.dateMask != null && widget.dateMask != '') {
-            _dateLabelController.text =
-                DateFormat(widget.dateMask, languageCode).format(_dDate);
+          if (widget.dateMask != null && widget.dateMask!.isNotEmpty) {
+            _dateLabelController.text = DateFormat(widget.dateMask!, localeStr).format(dt);
           } else {
-            String lsMask = 'MMM d, yyyy';
-
-            if (widget.type == DateTimePickerType.dateTime && _sTime != '') {
-              lsMask = 'MMM d, yyyy - HH:mm';
-
-              if (!widget.use24HourFormat) {
-                lsMask = 'MMM d, yyyy - hh:mm a';
-              }
-            }
-
-            _dateLabelController.text =
-                DateFormat(lsMask, languageCode).format(_dDate);
+            final lsMask = _sTime != '' ? 'MMM dd, yyyy - HH:mm' : 'MMM dd, yyyy';
+            _dateLabelController.text = DateFormat(lsMask, localeStr).format(dt);
           }
-        } else {
-          final llTime = lsValue.split(':');
-          _tTime = TimeOfDay(
-              hour: int.parse(llTime[0]), minute: int.parse(llTime[1]));
-          _sTime = lsValue;
-          _timeLabelController.text = _sTime + _sPeriod;
-        }
+
+          _timeLabelController.text = (_sTime + _sPeriod).trim();
+          _sValue = _formatStoredDateTime(dt);
+        } catch (_) {}
       }
     } else {
       _dateLabelController.clear();
       _timeLabelController.clear();
-
       initValues();
     }
   }
@@ -679,7 +547,8 @@ class _DateTimePickerState extends FormFieldState<String> {
   @override
   void dispose() {
     widget.controller?.removeListener(_handleControllerChanged);
-
+    _dateLabelController.dispose();
+    _timeLabelController.dispose();
     super.dispose();
   }
 
@@ -700,10 +569,10 @@ class _DateTimePickerState extends FormFieldState<String> {
 
   void onChangedHandler(String value) {
     widget.onChanged?.call(value);
-
     didChange(value);
   }
 
+  // ---------- show date picker ----------
   Future<void> _showDatePickerDialog() async {
     final ldDatePicked = await showDatePicker(
       context: context,
@@ -726,28 +595,35 @@ class _DateTimePickerState extends FormFieldState<String> {
       routeSettings: widget.routeSettings,
     );
 
-    final languageCode = _intlLocaleString();
+    final localeStr = _intlLocaleString();
     if (ldDatePicked != null) {
-      _sDate = DateFormat('yyyy-MM-dd', languageCode).format(ldDatePicked);
       _dDate = ldDatePicked;
+      _sDate = _formatStoredDate(_dDate);
       final lsOldValue = _sValue;
-      _sValue = _sDate;
-      String lsFormatedDate;
-
-      if (widget.dateMask != null && widget.dateMask != '') {
-        lsFormatedDate = DateFormat(widget.dateMask, languageCode)
-            .format(DateTime.tryParse(_sDate)!);
-      } else {
-        lsFormatedDate = DateFormat('MMM dd, yyyy', languageCode)
-            .format(DateTime.tryParse(_sDate)!);
-      }
 
       if (widget.type == DateTimePickerType.dateTimeSeparate && _sTime != '') {
-        _sValue = '$_sDate $_sTime';
+        // keep existing time and combine
+        final full = DateFormat('yyyy-MM-dd').parse(_sDate);
+        final combined = DateTime(
+            _dDate.year,
+            _dDate.month,
+            _dDate.day,
+            _tTime.hour,
+            _tTime.minute);
+        _sValue = _formatStoredDateTime(combined);
+      } else {
+        _sValue = _sDate;
       }
 
-      _sValue = _sValue.trim();
-      _dateLabelController.text = lsFormatedDate;
+      // date label for display
+      if (widget.dateMask != null && widget.dateMask!.isNotEmpty) {
+        _dateLabelController.text =
+            DateFormat(widget.dateMask!, localeStr).format(_dDate);
+      } else {
+        _dateLabelController.text =
+            DateFormat('MMM dd, yyyy', localeStr).format(_dDate);
+      }
+
       _effectiveController?.text = _sValue;
 
       if (_sValue != lsOldValue) {
@@ -756,40 +632,26 @@ class _DateTimePickerState extends FormFieldState<String> {
     }
   }
 
-  String _intlLocaleString() {
-    final loc = widget.locale;
-    if (loc == null) return Intl.getCurrentLocale();
-    final cc = loc.countryCode;
-    if (cc != null && cc.isNotEmpty) {
-      return '${loc.languageCode}-${cc}'; // en-AU
-    }
-    return loc.languageCode; // 'en'
-  }
-
-  void set12HourTimeValues(final TimeOfDay ptTimePicked) {
-    // use the current selected date (_dDate) so "yesterday" works correctly
-    final ldTime = DateTime(
+  // ---------- 12-hour helper ----------
+  String _set12HourTimeValues(final TimeOfDay ptTimePicked) {
+    final built = DateTime(
       _dDate.year,
       _dDate.month,
       _dDate.day,
       ptTimePicked.hour,
       ptTimePicked.minute,
     );
-  
     final localeStr = _intlLocaleString();
-  
-    // Full formatted time including AM/PM, e.g. "07:30 PM"
-    final full = DateFormat('hh:mm a', localeStr).format(ldTime);
-  
-    // Split into time and period
-    final parts = full.split(' ');
-    _sTime = parts.isNotEmpty ? parts[0] : DateFormat('hh:mm', localeStr).format(ldTime);
+
+    final formatted = DateFormat('hh:mm a', localeStr).format(built); // e.g. "07:30 PM"
+    final parts = formatted.split(' ');
+    _sTime = parts.isNotEmpty ? parts[0] : DateFormat('hh:mm', localeStr).format(built);
     _sPeriod = parts.length > 1 ? ' ${parts[1]}' : '';
-  
-    // Keep _sValue in a stable, parseable 24-hour format for internal/storage use
-    _sValue = DateFormat('HH:mm', localeStr).format(ldTime);
+    // return parseable stored 24-hour time 'HH:mm'
+    return _formatStoredTime(built);
   }
 
+  // ---------- show time picker ----------
   Future<void> _showTimePickerDialog() async {
     final ltTimePicked = await showTimePicker(
       context: context,
@@ -809,30 +671,54 @@ class _DateTimePickerState extends FormFieldState<String> {
     );
 
     if (ltTimePicked != null) {
-      var lsHour = ltTimePicked.hour.toString().padLeft(2, '0');
-      var lsMinute = ltTimePicked.minute.toString().padLeft(2, '0');
-
-      if (ltTimePicked.period.index == 0 && lsHour == '12') {
-        lsHour = '00';
-      }
-
-      if (!widget.use24HourFormat) {
-        set12HourTimeValues(ltTimePicked);
-      } else {
-        _sTime = '$lsHour:$lsMinute';
-      }
-
       _tTime = ltTimePicked;
 
-      _timeLabelController.text = _sTime;
-      final lsOldValue = _sValue;
-      _sValue = _sTime;
+      final localeStr = _intlLocaleString();
 
-      if (widget.type == DateTimePickerType.dateTimeSeparate && _sDate != '') {
-        _sValue = '$_sDate $_sTime';
+      // Build a DateTime with the currently selected date + picked time
+      final selectedDateTime = DateTime(
+        _dDate.year,
+        _dDate.month,
+        _dDate.day,
+        ltTimePicked.hour,
+        ltTimePicked.minute,
+      );
+
+      // Display string depends on 24-hour setting
+      final displayTime = widget.use24HourFormat
+          ? DateFormat('HH:mm', localeStr).format(selectedDateTime)
+          : DateFormat('hh:mm a', localeStr).format(selectedDateTime);
+
+      // stored time always HH:mm
+      final storedTime = DateFormat('HH:mm').format(selectedDateTime);
+
+      // update display components
+      if (widget.use24HourFormat) {
+        _sTime = DateFormat('HH:mm', localeStr).format(selectedDateTime);
+        _sPeriod = '';
+      } else {
+        // set using helper to guarantee correct AM/PM
+        final stored = _set12HourTimeValues(ltTimePicked);
+        _sTime = widget.use24HourFormat
+            ? DateFormat('HH:mm', localeStr).format(selectedDateTime)
+            : _sTime; // already set by helper
+        // helper returns stored HH:mm, but we also set _sPeriod in helper
       }
 
-      _sValue = _sValue.trim();
+      _timeLabelController.text = displayTime.trim();
+
+      final lsOldValue = _sValue;
+
+      // Update stored value depending on type
+      if (widget.type == DateTimePickerType.time) {
+        _sValue = storedTime;
+      } else if (widget.type == DateTimePickerType.dateTimeSeparate && _sDate != '') {
+        _sValue = '${_sDate} $storedTime'; // yyyy-MM-dd HH:mm
+      } else {
+        // When used inside a dateTime widget, the date should already be managed elsewhere
+        _sValue = storedTime;
+      }
+
       _effectiveController?.text = _sValue;
 
       if (_sValue != lsOldValue) {
@@ -841,6 +727,7 @@ class _DateTimePickerState extends FormFieldState<String> {
     }
   }
 
+  // ---------- show date + time picker ----------
   Future<void> _showDateTimePickerDialog() async {
     String lsFormatedDate;
 
@@ -865,9 +752,8 @@ class _DateTimePickerState extends FormFieldState<String> {
       routeSettings: widget.routeSettings,
     );
 
-    final languageCode = _intlLocaleString();
+    final localeStr = _intlLocaleString();
     if (ldDatePicked != null) {
-      _sDate = DateFormat('yyyy-MM-dd', languageCode).format(ldDatePicked);
       _dDate = ldDatePicked;
 
       final ltTimePicked = await showTimePicker(
@@ -887,47 +773,47 @@ class _DateTimePickerState extends FormFieldState<String> {
         },
       );
 
+      DateTime combined;
       if (ltTimePicked != null) {
-        var lsHour = ltTimePicked.hour.toString().padLeft(2, '0');
-        var lsMinute = ltTimePicked.minute.toString().padLeft(2, '0');
-
-        if (ltTimePicked.period.index == 0 && lsHour == '12') {
-          lsHour = '00';
-        }
-
-        if (!widget.use24HourFormat) {
-          set12HourTimeValues(ltTimePicked);
-        } else {
-          _sTime = '$lsHour:$lsMinute';
-        }
-
         _tTime = ltTimePicked;
+        combined = DateTime(
+            _dDate.year, _dDate.month, _dDate.day, ltTimePicked.hour, ltTimePicked.minute);
+
+        if (widget.use24HourFormat) {
+          _sTime = DateFormat('HH:mm', localeStr).format(combined);
+          _sPeriod = '';
+        } else {
+          _sTime = DateFormat('hh:mm', localeStr).format(combined);
+          _sPeriod = ' ' + DateFormat('a', localeStr).format(combined);
+        }
+
+        _timeLabelController.text = (_sTime + _sPeriod).trim();
       } else {
-        var lsHour = _tTime.hour.toString().padLeft(2, '0');
-        final lsMinute = _tTime.minute.toString().padLeft(2, '0');
+        // user cancelled time selection -> keep existing _tTime
+        combined = DateTime(
+            _dDate.year, _dDate.month, _dDate.day, _tTime.hour, _tTime.minute);
 
-        if (_tTime.period.index == 0 && lsHour == '12') {
-          lsHour = '00';
+        if (widget.use24HourFormat) {
+          _sTime = DateFormat('HH:mm', localeStr).format(combined);
+          _sPeriod = '';
+        } else {
+          _sTime = DateFormat('hh:mm', localeStr).format(combined);
+          _sPeriod = ' ' + DateFormat('a', localeStr).format(combined);
         }
-
-        if (!widget.use24HourFormat) {
-          _sPeriod = _tTime.period.index == 0 ? ' AM' : ' PM';
-        }
-
-        _sTime = '$lsHour:$lsMinute';
+        _timeLabelController.text = (_sTime + _sPeriod).trim();
       }
 
       final lsOldValue = _sValue;
-      _sValue = '$_sDate $_sTime';
-      _sValue = _sValue.trim();
 
-      if (widget.dateMask != null && widget.dateMask != '') {
-        lsFormatedDate = DateFormat(widget.dateMask, languageCode)
-            .format(DateTime.tryParse(_sValue)!);
+      // store as 'yyyy-MM-dd HH:mm' so parsing is stable
+      _sValue = _formatStoredDateTime(combined);
+
+      // build formatted date label for display (uses dateMask if provided)
+      if (widget.dateMask != null && widget.dateMask!.isNotEmpty) {
+        lsFormatedDate = DateFormat(widget.dateMask!, localeStr).format(combined);
       } else {
         final lsMask = _sTime != '' ? 'MMM dd, yyyy - HH:mm' : 'MMM dd, yyyy';
-        lsFormatedDate = DateFormat(lsMask, languageCode)
-            .format(DateTime.tryParse(_sValue)!);
+        lsFormatedDate = DateFormat(lsMask, localeStr).format(combined);
       }
 
       _dateLabelController.text = lsFormatedDate;
