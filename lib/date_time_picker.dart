@@ -721,7 +721,7 @@ class _DateTimePickerState extends FormFieldState<String> {
       errorFormatText: widget.errorFormatText,
       errorInvalidText: widget.errorInvalidText,
       //textDirection: widget.textDirection,
-      locale: _intlLocaleString(),
+      locale: widget.locale,
       useRootNavigator: widget.useRootNavigator,
       routeSettings: widget.routeSettings,
     );
@@ -757,7 +757,7 @@ class _DateTimePickerState extends FormFieldState<String> {
   }
 
   String _intlLocaleString() {
-    final loc = _intlLocaleString();
+    final loc = widget.locale;
     if (loc == null) return Intl.getCurrentLocale();
     final cc = loc.countryCode;
     if (cc != null && cc.isNotEmpty) {
@@ -860,7 +860,7 @@ class _DateTimePickerState extends FormFieldState<String> {
       errorFormatText: widget.errorFormatText,
       errorInvalidText: widget.errorInvalidText,
       //textDirection: widget.textDirection,
-      locale: _intlLocaleString(),
+      locale: widget.locale,
       useRootNavigator: widget.useRootNavigator,
       routeSettings: widget.routeSettings,
     );
